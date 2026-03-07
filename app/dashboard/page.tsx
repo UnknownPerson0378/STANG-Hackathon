@@ -10,6 +10,7 @@ import { InsightsPanel } from "@/components/gut-instinct/dashboard/insights-pane
 import { LocationMapPanel } from "@/components/gut-instinct/dashboard/location-map-panel";
 import { LogTicketModal } from "@/components/gut-instinct/dashboard/log-ticket-modal";
 import { RecentActivity } from "@/components/gut-instinct/dashboard/recent-activity";
+import { Footer } from "@/components/gut-instinct/footer";
 
 interface UserData {
   id: string;
@@ -85,6 +86,8 @@ export default function DashboardPage() {
           {/* Location Map - Full Width */}
           <LocationMapPanel />
         </main>
+
+        <Footer />
       </div>
 
       {/* Log Ticket Modal */}

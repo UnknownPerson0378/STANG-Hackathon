@@ -80,7 +80,7 @@ export function DashboardHeader({ onLogTicket, user }: DashboardHeaderProps) {
             {/* Log Ticket CTA */}
             <Button
               onClick={onLogTicket}
-              className="hidden sm:flex items-center gap-2 h-9 px-4 bg-primary hover:bg-primary/90 text-primary-foreground font-medium shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all"
+              className="hidden sm:flex items-center gap-2 h-9 px-4 bg-primary text-primary-foreground font-medium shadow-lg shadow-primary/20 hover:bg-primary/80 hover:text-primary-foreground hover:shadow-primary/30 transition-all"
             >
               <Plus className="w-4 h-4" />
               Log Ticket
@@ -90,7 +90,7 @@ export function DashboardHeader({ onLogTicket, user }: DashboardHeaderProps) {
             <Button
               onClick={onLogTicket}
               size="icon"
-              className="sm:hidden h-9 w-9 bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/20"
+              className="sm:hidden h-9 w-9 bg-primary text-primary-foreground hover:bg-primary/80 hover:text-primary-foreground shadow-lg shadow-primary/20"
             >
               <Plus className="w-4 h-4" />
             </Button>

@@ -1,25 +1,24 @@
-"use client";
-
+import Link from "next/link";
 import { Github, Twitter } from "lucide-react";
 
 const footerLinks = {
   product: [
-    { label: "Dashboard", href: "#dashboard" },
-    { label: "Log Ticket", href: "#log-ticket" },
-    { label: "Insights", href: "#insights" },
-    { label: "Location Map", href: "#map" },
+    { label: "Dashboard", href: "/dashboard" },
+    { label: "Log Ticket", href: "/dashboard" },
+    { label: "Insights", href: "/dashboard" },
+    { label: "Location Map", href: "/dashboard" },
   ],
   company: [
-    { label: "About", href: "#" },
-    { label: "Philosophy", href: "#" },
-    { label: "Privacy", href: "#" },
-    { label: "Terms", href: "#" },
+    { label: "About", href: "/about" },
+    { label: "Philosophy", href: "/philosophy" },
+    { label: "Privacy", href: "/privacy" },
+    { label: "Terms", href: "/terms" },
   ],
   resources: [
-    { label: "Documentation", href: "#" },
-    { label: "FAQ", href: "#" },
-    { label: "Support", href: "#" },
-    { label: "Changelog", href: "#" },
+    { label: "Documentation", href: "/documentation" },
+    { label: "FAQ", href: "/faq" },
+    { label: "Support", href: "/support" },
+    { label: "Changelog", href: "/changelog" },
   ],
 };
 
@@ -30,12 +29,12 @@ export function Footer() {
         <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-12">
           {/* Brand */}
           <div className="lg:col-span-2">
-            <a href="#" className="flex items-center gap-3 mb-6">
+            <Link href="/" className="flex items-center gap-3 mb-6">
               <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center">
                 <span className="text-primary-foreground font-serif text-lg">G</span>
               </div>
               <span className="font-serif text-lg tracking-tight">Gut Instinct</span>
-            </a>
+            </Link>
             <p className="text-muted-foreground leading-relaxed max-w-sm mb-6">
               The lottery ticket is just the vehicle. The real subject is you.
             </p>
@@ -61,12 +60,12 @@ export function Footer() {
             <ul className="space-y-3">
               {footerLinks.product.map((link) => (
                 <li key={link.label}>
-                  <a 
+                  <Link 
                     href={link.href} 
                     className="text-sm text-muted-foreground hover:text-foreground transition-colors"
                   >
                     {link.label}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -78,12 +77,12 @@ export function Footer() {
             <ul className="space-y-3">
               {footerLinks.company.map((link) => (
                 <li key={link.label}>
-                  <a 
+                  <Link 
                     href={link.href} 
                     className="text-sm text-muted-foreground hover:text-foreground transition-colors"
                   >
                     {link.label}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -95,12 +94,12 @@ export function Footer() {
             <ul className="space-y-3">
               {footerLinks.resources.map((link) => (
                 <li key={link.label}>
-                  <a 
+                  <Link 
                     href={link.href} 
                     className="text-sm text-muted-foreground hover:text-foreground transition-colors"
                   >
                     {link.label}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>
