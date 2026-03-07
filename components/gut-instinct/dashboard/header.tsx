@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { 
   Plus, 
@@ -19,11 +20,32 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-interface DashboardHeaderProps {
-  onLogTicket: () => void;
+interface UserData {
+  id: string;
+  email: string;
+  name: string | null;
 }
 
-export function DashboardHeader({ onLogTicket }: DashboardHeaderProps) {
+interface DashboardHeaderProps {
+  onLogTicket: () => void;
+  user?: UserData | null;
+}
+
+export function DashboardHeader({ onLogTicket, user }: DashboardHeaderProps) {
+  const router = useRouter();
+
+  const handleSignOut = async () => {
+    try {
+      await fetch("/api/auth/logout", { method: "POST" });
+      router.push("/login");
+    } catch {
+      console.error("Logout failed");
+    }
+  };
+
+  const userInitials = user?.name 
+    ? user.name.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2)
+    : user?.email?.slice(0, 2).toUpperCase() || "U";
   return (
     <header className="sticky top-0 z-50 border-b border-border/40 bg-background/80 backdrop-blur-xl">
       <div className="container mx-auto px-4 lg:px-8">
@@ -84,15 +106,15 @@ export function DashboardHeader({ onLogTicket }: DashboardHeaderProps) {
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="h-9 px-2 gap-2 text-muted-foreground hover:text-foreground">
                   <div className="w-7 h-7 rounded-full bg-gradient-to-br from-primary/30 to-accent/30 flex items-center justify-center">
-                    <span className="text-xs font-medium text-foreground">JD</span>
+                    <span className="text-xs font-medium text-foreground">{userInitials}</span>
                   </div>
                   <ChevronDown className="w-3 h-3" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56">
                 <div className="px-3 py-2">
-                  <p className="text-sm font-medium">John Doe</p>
-                  <p className="text-xs text-muted-foreground">john@example.com</p>
+                  <p className="text-sm font-medium">{user?.name || "User"}</p>
+                  <p className="text-xs text-muted-foreground">{user?.email || ""}</p>
                 </div>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem>
@@ -108,7 +130,7 @@ export function DashboardHeader({ onLogTicket }: DashboardHeaderProps) {
                   Help Center
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem className="text-destructive">
+                <DropdownMenuItem className="text-destructive" onClick={handleSignOut}>
                   <LogOut className="w-4 h-4 mr-2" />
                   Sign Out
                 </DropdownMenuItem>

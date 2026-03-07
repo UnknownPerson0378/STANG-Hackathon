@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { DashboardHeader } from "@/components/gut-instinct/dashboard/header";
 import { StatsGrid } from "@/components/gut-instinct/dashboard/stats-grid";
 import { CalibrationScore } from "@/components/gut-instinct/dashboard/calibration-score";
@@ -10,8 +11,44 @@ import { LocationMapPanel } from "@/components/gut-instinct/dashboard/location-m
 import { LogTicketModal } from "@/components/gut-instinct/dashboard/log-ticket-modal";
 import { RecentActivity } from "@/components/gut-instinct/dashboard/recent-activity";
 
+interface UserData {
+  id: string;
+  email: string;
+  name: string | null;
+}
+
 export default function DashboardPage() {
+  const router = useRouter();
   const [isLogTicketOpen, setIsLogTicketOpen] = useState(false);
+  const [user, setUser] = useState<UserData | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    async function checkAuth() {
+      try {
+        const response = await fetch("/api/auth/me");
+        if (!response.ok) {
+          router.push("/login");
+          return;
+        }
+        const data = await response.json();
+        setUser(data.user);
+      } catch {
+        router.push("/login");
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    checkAuth();
+  }, [router]);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -22,7 +59,7 @@ export default function DashboardPage() {
       </div>
 
       <div className="relative z-10">
-        <DashboardHeader onLogTicket={() => setIsLogTicketOpen(true)} />
+        <DashboardHeader onLogTicket={() => setIsLogTicketOpen(true)} user={user} />
         
         <main className="container mx-auto px-4 lg:px-8 py-8 space-y-8">
           {/* Stats Row */}
