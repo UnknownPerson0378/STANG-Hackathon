@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { geminiModel } from "@/lib/gemini";
-
+import { getGeminiModel } from "@/lib/gemini";
 function safeString(value: unknown) {
   if (typeof value === "string") return value;
   if (typeof value === "number") return String(value);
@@ -80,8 +79,8 @@ Return valid JSON only in this exact format:
 }
 `;
 
-    const result = await geminiModel.generateContent(prompt);
-    const text = result.response.text().trim();
+const geminiModel = getGeminiModel();
+const result = await geminiModel.generateContent(prompt);    const text = result.response.text().trim();
 
     let parsed;
     try {
