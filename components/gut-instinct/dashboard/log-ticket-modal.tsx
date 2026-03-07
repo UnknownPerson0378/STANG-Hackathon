@@ -168,7 +168,7 @@ export function LogTicketModal({ open, onOpenChange }: LogTicketModalProps) {
         setImageSummary("");
         setExtractMessage("");
         setIsExtracting(false);
-      }, 250);
+      }, 200);
 
       return () => clearTimeout(timeout);
     }
@@ -205,62 +205,63 @@ export function LogTicketModal({ open, onOpenChange }: LogTicketModalProps) {
     );
   };
 
-const handleAnalyzeImage = async () => {
-  setSaveError("");
-  setExtractMessage("");
-  setSuccessMessage("");
+  const handleAnalyzeImage = async () => {
+    setSaveError("");
+    setExtractMessage("");
+    setSuccessMessage("");
 
-  if (!uploadedFile) {
-    setSaveError("Please upload an image first.");
-    return;
-  }
-
-  if (!uploadedFile.type.startsWith("image/")) {
-    setSaveError("Please upload a valid image file.");
-    return;
-  }
-
-  if (uploadedFile.size > 8 * 1024 * 1024) {
-    setSaveError("Image is too large. Please keep it under 8 MB.");
-    return;
-  }
-
-  try {
-    setIsExtracting(true);
-
-    const formData = new FormData();
-    formData.append("file", uploadedFile);
-
-    const response = await fetch("/api/extract-ticket", {
-      method: "POST",
-      body: formData,
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      setSaveError(data?.error || "Failed to analyze image.");
+    if (!uploadedFile) {
+      setSaveError("Please upload an image first.");
       return;
     }
 
-    if (data.ticketType) setTicketType(data.ticketType);
-    if (data.cost !== undefined && data.cost !== null && data.cost !== "") {
-      setCost(String(data.cost));
+    if (!uploadedFile.type.startsWith("image/")) {
+      setSaveError("Please upload a valid image file.");
+      return;
     }
-    if (data.date) setDate(data.date);
-    if (data.location) setLocation(data.location);
-    if (data.summary) setImageSummary(data.summary);
 
-    setExtractMessage("Image analyzed. Review and edit anything before saving.");
-  } catch (error) {
-    console.error(error);
-    setSaveError(
-      error instanceof Error ? error.message : "Failed to analyze image."
-    );
-  } finally {
-    setIsExtracting(false);
-  }
-};
+    if (uploadedFile.size > 8 * 1024 * 1024) {
+      setSaveError("Image is too large. Please keep it under 8 MB.");
+      return;
+    }
+
+    try {
+      setIsExtracting(true);
+
+      const formData = new FormData();
+      formData.append("file", uploadedFile);
+
+      const response = await fetch("/api/extract-ticket", {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setSaveError(data?.error || "Failed to analyze image.");
+        return;
+      }
+
+      if (data.ticketType) setTicketType(data.ticketType);
+      if (data.cost !== undefined && data.cost !== null && data.cost !== "") {
+        setCost(String(data.cost));
+      }
+      if (data.date) setDate(data.date);
+      if (data.location) setLocation(data.location);
+      if (data.summary) setImageSummary(data.summary);
+
+      setExtractMessage("Image analyzed. Review and edit anything before saving.");
+    } catch (error) {
+      console.error(error);
+      setSaveError(
+        error instanceof Error ? error.message : "Failed to analyze image."
+      );
+    } finally {
+      setIsExtracting(false);
+    }
+  };
+
   const validateBeforeSave = () => {
     const parsedCost = Number(cost);
     const parsedAmountWon = amountWon === "" ? 0 : Number(amountWon);
@@ -393,13 +394,13 @@ const handleAnalyzeImage = async () => {
   return (
     <div className="fixed inset-0 z-50">
       <div
-        className="absolute inset-0 bg-background/80 backdrop-blur-sm animate-in fade-in duration-200"
+        className="absolute inset-0 z-0 bg-background/80 backdrop-blur-sm"
         onClick={() => onOpenChange(false)}
       />
 
-      <div className="absolute inset-4 sm:inset-auto sm:top-1/2 sm:left-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 sm:w-full sm:max-w-2xl max-h-[calc(100vh-2rem)] overflow-hidden animate-scale-in">
-        <div className="bg-card/95 backdrop-blur-xl border border-border/50 rounded-3xl shadow-2xl shadow-black/30 flex flex-col max-h-full overflow-hidden">
-          <div className="relative overflow-hidden border-b border-border/30">
+      <div className="relative z-10 flex min-h-screen items-center justify-center p-4">
+        <div className="w-full max-w-2xl max-h-[90vh] overflow-hidden rounded-3xl border border-border/50 bg-card/95 backdrop-blur-xl shadow-2xl shadow-black/30 flex flex-col">
+          <div className="relative overflow-hidden border-b border-border/30 shrink-0">
             <div className="absolute inset-0 bg-gradient-to-r from-primary/8 via-transparent to-accent/8" />
             <div className="relative flex items-center justify-between p-5">
               <div>
@@ -427,7 +428,7 @@ const handleAnalyzeImage = async () => {
 
           <div className="flex-1 overflow-y-auto p-5 space-y-6">
             {step === 1 && (
-              <div className="space-y-6 animate-fade-up">
+              <div className="space-y-6">
                 <div className="grid grid-cols-2 gap-3">
                   <button
                     type="button"
@@ -486,7 +487,7 @@ const handleAnalyzeImage = async () => {
                       </div>
                     </div>
 
-                    <label className="block">
+                    <label className="block cursor-pointer">
                       <input
                         type="file"
                         accept="image/*"
@@ -499,7 +500,7 @@ const handleAnalyzeImage = async () => {
                           setSaveError("");
                         }}
                       />
-                      <div className="cursor-pointer rounded-2xl border border-dashed border-border/50 bg-background/40 p-5 hover:bg-background/60 transition-colors">
+                      <div className="rounded-2xl border border-dashed border-border/50 bg-background/40 p-5 hover:bg-background/60 transition-colors">
                         <div className="flex flex-col items-center justify-center text-center gap-2">
                           <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center">
                             <UploadCloud className="w-6 h-6 text-primary" />
@@ -651,7 +652,7 @@ const handleAnalyzeImage = async () => {
             )}
 
             {step === 2 && (
-              <div className="space-y-6 animate-fade-up">
+              <div className="space-y-6">
                 <PremiumSlider
                   label="Confidence"
                   sublabel="How sure did you feel before buying?"
@@ -675,7 +676,7 @@ const handleAnalyzeImage = async () => {
             )}
 
             {step === 3 && (
-              <div className="space-y-6 animate-fade-up">
+              <div className="space-y-6">
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-foreground">Amount Won</label>
                   <input
@@ -723,7 +724,7 @@ const handleAnalyzeImage = async () => {
             )}
           </div>
 
-          <div className="p-5 border-t border-border/30 flex items-center justify-between gap-3">
+          <div className="shrink-0 border-t border-border/30 p-5 flex items-center justify-between gap-3 bg-card/90">
             <Button
               type="button"
               variant="ghost"
@@ -733,41 +734,39 @@ const handleAnalyzeImage = async () => {
               Back
             </Button>
 
-            <div className="flex items-center gap-3">
-              {step < 3 ? (
-                <Button
-                  type="button"
-                  onClick={() => setStep((s) => Math.min(3, s + 1))}
-                  className="gap-2"
-                >
-                  Next
-                  <ChevronRight className="w-4 h-4" />
-                </Button>
-              ) : (
-                <Button
-                  type="button"
-                  onClick={handleSaveTicket}
-                  disabled={isSaving || isExtracting}
-                  className="gap-2 bg-gradient-to-r from-primary to-accent text-primary-foreground"
-                >
-                  {isSaving ? (
-                    <>
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                      Saving...
-                    </>
-                  ) : (
-                    <>
-                      <Check className="w-4 h-4" />
-                      Save Ticket
-                    </>
-                  )}
-                </Button>
-              )}
-            </div>
+            {step < 3 ? (
+              <Button
+                type="button"
+                onClick={() => setStep((s) => Math.min(3, s + 1))}
+                className="gap-2"
+              >
+                Next
+                <ChevronRight className="w-4 h-4" />
+              </Button>
+            ) : (
+              <Button
+                type="button"
+                onClick={handleSaveTicket}
+                disabled={isSaving || isExtracting}
+                className="gap-2 bg-gradient-to-r from-primary to-accent text-primary-foreground"
+              >
+                {isSaving ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    Saving...
+                  </>
+                ) : (
+                  <>
+                    <Check className="w-4 h-4" />
+                    Save Ticket
+                  </>
+                )}
+              </Button>
+            )}
           </div>
 
           {saveError && (
-            <div className="px-5 pb-5">
+            <div className="shrink-0 px-5 pb-5">
               <p className="text-sm text-destructive">{saveError}</p>
             </div>
           )}
