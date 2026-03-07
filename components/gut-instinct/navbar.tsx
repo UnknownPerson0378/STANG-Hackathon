@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -43,11 +44,11 @@ export function Navbar() {
 
           {/* Desktop CTA */}
           <div className="hidden md:flex items-center gap-4">
-            <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">
-              Sign In
+            <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground" asChild>
+              <Link href="/login">Sign In</Link>
             </Button>
-            <Button size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90">
-              Get Started
+            <Button size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90" asChild>
+              <Link href="/signup">Get Started</Link>
             </Button>
           </div>
 
@@ -81,11 +82,11 @@ export function Navbar() {
               </a>
             ))}
             <div className="flex flex-col gap-2 pt-4 border-t border-border/30">
-              <Button variant="ghost" size="sm" className="justify-start">
-                Sign In
+              <Button variant="ghost" size="sm" className="justify-start" asChild>
+                <Link href="/login">Sign In</Link>
               </Button>
-              <Button size="sm" className="bg-primary text-primary-foreground">
-                Get Started
+              <Button size="sm" className="bg-primary text-primary-foreground" asChild>
+                <Link href="/signup">Get Started</Link>
               </Button>
             </div>
           </div>
