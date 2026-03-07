@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getGeminiModel } from "@/lib/gemini";
+import { geminiModel } from "@/lib/gemini";
+
 function safeString(value: unknown) {
   if (typeof value === "string") return value;
   if (typeof value === "number") return String(value);
@@ -42,6 +43,7 @@ export async function POST(request: NextRequest) {
 
     const today = new Date();
     today.setHours(23, 59, 59, 999);
+
     if (selectedDate > today) {
       return NextResponse.json(
         { error: "Purchase date cannot be in the future." },
@@ -79,10 +81,17 @@ Return valid JSON only in this exact format:
 }
 `;
 
-const geminiModel = getGeminiModel();
-const result = await geminiModel.generateContent(prompt);    const text = result.response.text().trim();
+    const result = await geminiModel.generateContent(prompt);
+    const text = result.response.text().trim();
 
-    let parsed;
+    let parsed:
+      | {
+          summary?: string;
+          calibration?: string;
+          observation?: string;
+        }
+      | null = null;
+
     try {
       parsed = JSON.parse(text);
     } catch {
@@ -90,7 +99,9 @@ const result = await geminiModel.generateContent(prompt);    const text = result
       if (fencedMatch?.[1]) {
         try {
           parsed = JSON.parse(fencedMatch[1]);
-        } catch {}
+        } catch {
+          parsed = null;
+        }
       }
     }
 
@@ -102,9 +113,14 @@ const result = await geminiModel.generateContent(prompt);    const text = result
       };
     }
 
-    return NextResponse.json(parsed);
+    return NextResponse.json({
+      summary: parsed.summary || "Ticket saved and analyzed.",
+      calibration: parsed.calibration || "Log more entries to improve behavioral insight.",
+      observation: parsed.observation || "No structured observation was returned.",
+    });
   } catch (error) {
     console.error("Analyze route error:", error);
+
     return NextResponse.json(
       { error: "Failed to analyze ticket" },
       { status: 500 }
