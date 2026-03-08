@@ -12,28 +12,34 @@ export async function verifyPassword(password: string, hash: string) {
 export function createSession(userId: string) {
   return {
     userId,
-    createdAt: Date.now()
+    createdAt: Date.now(),
   };
 }
 
-export function setSessionCookie(session: any) {
-  cookies().set("session", JSON.stringify(session), {
+export async function setSessionCookie(session: any) {
+  const cookieStore = await cookies();
+
+  cookieStore.set("session", JSON.stringify(session), {
     httpOnly: true,
-    secure: true,
-    path: "/"
+    secure: process.env.NODE_ENV === "production",
+    path: "/",
   });
 }
 
-export function clearSessionCookie() {
-  cookies().delete("session");
+export async function clearSessionCookie() {
+  const cookieStore = await cookies();
+  cookieStore.delete("session");
 }
 
 export async function deleteSession() {
-  clearSessionCookie();
+  await clearSessionCookie();
 }
 
 export async function getCurrentUser() {
-  const session = cookies().get("session");
+  const cookieStore = await cookies();
+  const session = cookieStore.get("session");
+
   if (!session) return null;
+
   return JSON.parse(session.value);
 }
