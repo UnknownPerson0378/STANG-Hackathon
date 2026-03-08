@@ -1,7 +1,9 @@
 import type { OpenNextConfig } from "@opennextjs/cloudflare";
 
 const config: OpenNextConfig = {
-  default: {},
+  default: {
+    override: {},
+  },
 };
 
 export default config;
