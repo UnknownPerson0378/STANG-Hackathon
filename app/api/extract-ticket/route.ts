@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Buffer } from "node:buffer";
-import { geminiModel } from "@/lib/gemini";
+import { getGeminiModel } from "@/lib/gemini";
 
 export const runtime = "nodejs";
 
@@ -113,10 +113,10 @@ Rules:
 - JSON only
 `;
 
-    const result = await geminiModel.generateContent([
-      {
-        text: prompt,
-      },
+    const model = getGeminiModel();
+
+    const result = await model.generateContent([
+      prompt,
       {
         inlineData: {
           mimeType: file.type,
@@ -141,7 +141,9 @@ Rules:
     return NextResponse.json({
       ticketType: normalizeTicketType(parsed.ticketType),
       cost:
-        parsed.cost === "" || parsed.cost == null || Number.isNaN(Number(parsed.cost))
+        parsed.cost === "" ||
+        parsed.cost == null ||
+        Number.isNaN(Number(parsed.cost))
           ? ""
           : Number(parsed.cost),
       date: typeof parsed.date === "string" ? parsed.date : "",
